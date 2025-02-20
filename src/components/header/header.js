@@ -1,8 +1,10 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
-import { userLogout } from "../../features/userSlice";
+
+import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
+
+import { userLogout } from "../../redux/userSlice";
 import logo from "../../asset/argentBankLogo.png";
 import "../../style/main.css";
 
