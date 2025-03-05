@@ -7,7 +7,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import './index.css';
 import Header from "./components/header/header";
 import Footer from "./components/footer/footer";
-import Index from "./page/index/index";
+import Homepage from "./page/homepage/homepage";
 import SignIn from "./page/signin/signin";
 import User from "./page/user/user";
 import ErrorPage from "./page/error/error";
@@ -20,7 +20,7 @@ root.render(
       <Router>
         <Header />
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route path="/" element={<Homepage />} />
           <Route path="/login" element={<SignIn />} />
           <Route path="/profile" element={<User />} />
           <Route path="/*" element={<ErrorPage />} />

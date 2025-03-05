@@ -63,9 +63,13 @@ const userSlice = createSlice({
 		};
 
 		const handleFulfilled = (state, { payload }) => {
+			console.log("🟢 userLogin fulfilled - API response:", payload);
+
 			state.loading = false;
 			if (payload.status === 200) {
+				console.log("✅ Success! Token received:", payload.body.token);
 				saveUserToken(payload.body.token, state.rememberMe);
+
 				state.success = true;
 				state.isLogged = true;
 				state.email = payload.body.email;
@@ -75,6 +79,7 @@ const userSlice = createSlice({
 				state.createdAt = payload.body.createdAt;
 				state.updatedAt = payload.body.updatedAt;
 			} else {
+				console.error("🔴 API responded with an error:", payload);
 				state.success = false;
 				state.error = payload;
 			}
@@ -92,7 +97,15 @@ const userSlice = createSlice({
 			.addCase(userLogin.fulfilled, handleFulfilled)
 			.addCase(userLogin.rejected, handleRejected)
 			.addCase(userProfile.pending, handlePending)
-			.addCase(userProfile.fulfilled, handleFulfilled)
+			.addCase(userProfile.fulfilled, (state, action) => {
+				const userData = action.payload.body;  // Extraire "body"
+				state.firstName = userData.firstName;
+				state.lastName = userData.lastName;
+				state.email = userData.email;
+				state.id = userData.id;
+				state.createdAt = userData.createdAt;
+				state.updatedAt = userData.updatedAt;
+			})
 			.addCase(userProfile.rejected, handleRejected)
 			.addCase(userName.pending, handlePending)
 			.addCase(userName.fulfilled, handleFulfilled)

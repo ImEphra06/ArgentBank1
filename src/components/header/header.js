@@ -12,7 +12,8 @@ function Header() {
 	const dispatch = useDispatch();
 
 	// retrieve store data to know about user connexion
-	const { firstName } = useSelector((state) => state.user);
+	const { firstName, lastName } = useSelector((state) => state.user);
+	console.log("User state:", useSelector((state) => state.user));
 	const connected = sessionStorage.getItem("connected");
 
 	function Signout() {
@@ -25,7 +26,7 @@ function Header() {
 			<div>
 				<NavLink to="/profile" className="main-nav-item">
 					<i className="fa fa-user-circle" />
-					{` ${firstName}`}
+					{` ${firstName} ${lastName}`}
 				</NavLink>
 				<NavLink to="/" className="main-nav-item" onClick={Signout}>
 					<i className="fa fa-sign-out" /> Sign Out

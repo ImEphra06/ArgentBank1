@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
-const SERVER_URL = "http://localhost:3001";
+const SERVER_URL = "http://localhost:3001/api/v1/user/";
 
 // Fonction utilitaire pour les requêtes API
 const fetchAPI = async (endpoint, method = "GET", body = null, auth = false) => {
@@ -51,8 +51,11 @@ export const userProfile = createAsyncThunk(
 	"user/userProfile",
 	async (_, { rejectWithValue }) => {
 		try {
-			return await fetchAPI("profile", "POST", null, true);
+			const data = await fetchAPI("profile", "POST", null, true);
+			console.log("Profile API Response:", data); // Ajout du log ici
+			return data;
 		} catch (error) {
+			console.error("Error fetching profile:", error.message);
 			return rejectWithValue(error.message);
 		}
 	}
