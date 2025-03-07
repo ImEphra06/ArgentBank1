@@ -1,15 +1,17 @@
-import React from "react";
-import "../../style/main.css";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
+import ModifyModal from "../../components/modifyModal/modifyModal"; // Import du composant
+import "../../style/main.css";
 
 function User() {
     const { firstName, lastName } = useSelector((state) => state.user);
+    const [mode, setMode] = useState("normal");
 
     return (
         <main className="main bg-dark">
             <div className="header">
                 <h1>Welcome back<br />{` ${firstName} ${lastName}`}</h1>
-                <button className="edit-button">Edit Name</button>
+                <ModifyModal mode={mode} setMode={setMode} />
             </div>
             <h2 className="sr-only">Accounts</h2>
             <section className="account">
