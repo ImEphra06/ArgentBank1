@@ -134,24 +134,29 @@ paths:
         - Bearer: []
       tags:
         - Transactions Module
-      summary: Fetch transaction details
-      description: API for fetching transaction details
+      summary: Get all transactions for the current month grouped by account
+      description: API to fetch all transactions of the current month grouped by account
       parameters:
+        - in: query
+          name: month
+          description: Month for which transactions should be retrieved (format MM)
+          required: true
+          type: string
+        - in: query
+          name: year
+          description: Year for which transactions should be retrieved (format YYYY)
+          required: true
+          type: string
         - in: header
           name: Authorization
           description: Bearer JWT token
-          required: true
-          type: string
-        - in: path
-          name: transactionId
-          description: Transaction ID
           required: true
           type: string
       responses:
         '200':
           description: Transaction details retrieved successfully
           schema:
-            $ref: '#/definitions/TransactionDetailsResponse'
+            $ref: '#/definitions/TransactionsGroupedResponse'
         '400':
           description: Invalid Fields
           schema:
@@ -234,15 +239,38 @@ definitions:
         type: string
       lastName:
         type: string
-  TransactionDetailsResponse:
+  TransactionsGroupedResponse:
     type: object
     properties:
       status:
         type: integer
       message:
         type: string
-      body:
-        type: object
+      transactions:
+        type: array
+        items:
+          type: object
+          properties:
+            accountId:
+              type: string
+            accountName:
+              type: string
+            transactions:
+              type: array
+              items:
+                type: object
+                properties:
+                  transactionId:
+                    type: string
+                  amount:
+                    type: number
+                  date:
+                    type: string
+                    format: date-time
+                  category:
+                    type: string
+                  description:
+                    type: string
   ErrorResponse:
     type: object
     properties:
