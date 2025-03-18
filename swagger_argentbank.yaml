@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   title: ArgentBank API
   description: Contains all available API endpoints in this codebase
-  version: '1.0.1'
+  version: '1.0.0'
   termsOfService: 'http://swagger.io/terms/'
 host: localhost:3001
 basePath: /api/v2
@@ -90,6 +90,10 @@ paths:
           description: Invalid Fields
           schema:
             $ref: '#/definitions/ErrorResponse'
+        '403':
+          description: Access Denied - You cannot access the profile of another user
+          schema:
+            $ref: '#/definitions/ErrorResponse'
         '500':
           description: Internal Server Error
           schema:
@@ -124,6 +128,91 @@ paths:
           description: Invalid Fields
           schema:
             $ref: '#/definitions/ErrorResponse'
+        '403':
+          description: Access Denied - You cannot update the profile of another user
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /user/transactions:
+    post:
+      security:
+        - Bearer: []
+      tags:
+        - Transactions Module
+      summary: Add a new transaction
+      description: API for adding a new transaction
+      parameters:
+        - in: header
+          name: Authorization
+          description: Bearer JWT token
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Transaction payload
+          required: true
+          schema:
+            type: object
+            properties:
+              accountId:
+                type: string
+              amount:
+                type: number
+              date:
+                type: string
+                format: date-time
+              category:
+                type: string
+              description:
+                type: string
+      responses:
+        '201':
+          description: Transaction created successfully
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        '400':
+          description: Invalid request parameters
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - Transactions Module
+      summary: Get all transactions for the current month grouped by account
+      description: API for retrieving all transactions for the current month, grouped by account
+      parameters:
+        - in: header
+          name: Authorization
+          description: Bearer JWT token
+          required: true
+          type: string
+        - in: query
+          name: month
+          description: Month for retrieving transactions (format MM-YYYY)
+          required: false
+          type: string
+        - in: query
+          name: groupByAccount
+          description: If true, group transactions by account
+          required: false
+          type: boolean
+      responses:
+        '200':
+          description: Transactions retrieved successfully
+          schema:
+            $ref: '#/definitions/TransactionsGroupedResponse'
+        '400':
+          description: Invalid request parameters
+          schema:
+            $ref: '#/definitions/ErrorResponse'
         '500':
           description: Internal Server Error
           schema:
@@ -134,17 +223,12 @@ paths:
         - Bearer: []
       tags:
         - Transactions Module
-      summary: Get all transactions for the current month grouped by account
-      description: API to fetch all transactions of the current month grouped by account
+      summary: Get details of a specific transaction
+      description: API to fetch the details of a specific transaction by its ID
       parameters:
-        - in: query
-          name: month
-          description: Month for which transactions should be retrieved (format MM)
-          required: true
-          type: string
-        - in: query
-          name: year
-          description: Year for which transactions should be retrieved (format YYYY)
+        - in: path
+          name: transactionId
+          description: Transaction ID
           required: true
           type: string
         - in: header
@@ -165,13 +249,14 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/ErrorResponse'
-    delete:
+
+    put:
       security:
         - Bearer: []
       tags:
         - Transactions Module
-      summary: Delete a transaction
-      description: API for deleting a transaction
+      summary: Update a transaction
+      description: API for updating a transaction
       parameters:
         - in: header
           name: Authorization
@@ -183,13 +268,73 @@ paths:
           description: Transaction ID
           required: true
           type: string
+        - in: body
+          name: body
+          description: Updated transaction details
+          required: true
+          schema:
+            type: object
+            properties:
+              amount:
+                type: number
+              date:
+                type: string
+                format: date-time
+              category:
+                type: string
+              description:
+                type: string
       responses:
         '200':
-          description: Transaction deleted successfully
+          description: Transaction updated successfully
           schema:
             $ref: '#/definitions/ApiResponse'
         '400':
-          description: Invalid Fields
+          description: Invalid request parameters
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+
+    patch:
+      security:
+        - Bearer: []
+      tags:
+        - Transactions Module
+      summary: Remove specific fields from a transaction
+      description: API to remove specific information from a transaction without deleting it
+      parameters:
+        - in: header
+          name: Authorization
+          description: Bearer JWT token
+          required: true
+          type: string
+        - in: path
+          name: transactionId
+          description: Transaction ID
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Fields to remove from the transaction
+          required: true
+          schema:
+            type: object
+            properties:
+              removeFields:
+                type: array
+                items:
+                  type: string
+                  enum: ["amount", "date", "category", "description"]
+      responses:
+        '200':
+          description: Transaction fields removed successfully
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        '400':
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/ErrorResponse'
         '500':
