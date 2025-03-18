@@ -55,7 +55,7 @@ function ModifyModal({ mode, setMode }) {
             </button>
             <div className="update-name-container nodisplay" ref={formRef}>
                 <form onSubmit={handleSubmit(submitForm)}>
-                    <div>
+                    <div className="modifyField">
                         <input
                             className="input-name"
                             placeholder="First Name"
@@ -69,7 +69,7 @@ function ModifyModal({ mode, setMode }) {
                             required
                         />
                     </div>
-                    <div>
+                    <div className="modifyButton">
                         <button type="submit" className="save-button">
                             Save
                         </button>
