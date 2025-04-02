@@ -137,57 +137,13 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
   /user/transactions:
-    post:
-      security:
-        - Bearer: []
-      tags:
-        - Transactions Module
-      summary: Add a new transaction
-      description: API for adding a new transaction
-      parameters:
-        - in: header
-          name: Authorization
-          description: Bearer JWT token
-          required: true
-          type: string
-        - in: body
-          name: body
-          description: Transaction payload
-          required: true
-          schema:
-            type: object
-            properties:
-              accountId:
-                type: string
-              amount:
-                type: number
-              date:
-                type: string
-                format: date-time
-              category:
-                type: string
-              description:
-                type: string
-      responses:
-        '201':
-          description: Transaction created successfully
-          schema:
-            $ref: '#/definitions/ApiResponse'
-        '400':
-          description: Invalid request parameters
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '500':
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/ErrorResponse'
     get:
       security:
         - Bearer: []
       tags:
         - Transactions Module
-      summary: Get all transactions for the current month grouped by account
-      description: API for retrieving all transactions for the current month, grouped by account
+      summary: Get all transactions for the current month
+      description: API for retrieving all transactions for the current month
       parameters:
         - in: header
           name: Authorization
@@ -199,16 +155,25 @@ paths:
           description: Month for retrieving transactions (format MM-YYYY)
           required: false
           type: string
-        - in: query
-          name: groupByAccount
-          description: If true, group transactions by account
-          required: false
-          type: boolean
       responses:
         '200':
           description: Transactions retrieved successfully
           schema:
-            $ref: '#/definitions/TransactionsGroupedResponse'
+            type: array
+            items:
+              type: object
+              properties:
+                transactionId:
+                  type: string
+                amount:
+                  type: number
+                date:
+                  type: string
+                  format: date-time
+                category:
+                  type: string
+                description:
+                  type: string
         '400':
           description: Invalid request parameters
           schema:
@@ -240,7 +205,23 @@ paths:
         '200':
           description: Transaction details retrieved successfully
           schema:
-            $ref: '#/definitions/TransactionsGroupedResponse'
+            type: object
+            properties:
+              transactionId:
+                type: string
+              accountId:
+                type: string
+              accountName:
+                type: string
+              amount:
+                type: number
+              date:
+                type: string
+                format: date-time
+              category:
+                type: string
+              description:
+                type: string
         '400':
           description: Invalid Fields
           schema:
@@ -249,7 +230,6 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/ErrorResponse'
-
     put:
       security:
         - Bearer: []
@@ -298,49 +278,6 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
 
-    patch:
-      security:
-        - Bearer: []
-      tags:
-        - Transactions Module
-      summary: Remove specific fields from a transaction
-      description: API to remove specific information from a transaction without deleting it
-      parameters:
-        - in: header
-          name: Authorization
-          description: Bearer JWT token
-          required: true
-          type: string
-        - in: path
-          name: transactionId
-          description: Transaction ID
-          required: true
-          type: string
-        - in: body
-          name: body
-          description: Fields to remove from the transaction
-          required: true
-          schema:
-            type: object
-            properties:
-              removeFields:
-                type: array
-                items:
-                  type: string
-                  enum: ["amount", "date", "category", "description"]
-      responses:
-        '200':
-          description: Transaction fields removed successfully
-          schema:
-            $ref: '#/definitions/ApiResponse'
-        '400':
-          description: Invalid request parameters
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '500':
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/ErrorResponse'
 securityDefinitions:
   Bearer:
     type: apiKey

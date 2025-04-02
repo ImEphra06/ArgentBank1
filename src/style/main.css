@@ -4,6 +4,7 @@ html {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  height: 100%; /* Ajout pour garantir que html occupe toute la hauteur */
 }
 
 body {
@@ -11,10 +12,11 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  height: 100%; /* Assure que body occupe toute la hauteur disponible */
 }
 
 .main {
-  flex: 1;
+  flex: 1; /* Fait en sorte que le contenu principal prenne tout l'espace disponible */
 }
 
 .bg-dark {
@@ -24,10 +26,8 @@ body {
 .sr-only {
   border: 0 !important;
   clip: rect(1px, 1px, 1px, 1px) !important;
-  /* 1 */
   -webkit-clip-path: inset(50%) !important;
   clip-path: inset(50%) !important;
-  /* 2 */
   height: 1px !important;
   margin: -1px !important;
   overflow: hidden !important;
@@ -35,7 +35,6 @@ body {
   position: absolute !important;
   width: 1px !important;
   white-space: nowrap !important;
-  /* 3 */
 }
 
 .main-nav {
@@ -103,6 +102,13 @@ body {
   font-size: 0.9rem;
 }
 
+.error-message {
+  color: red;
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
 @media (min-width: 920px) {
   .hero {
     height: 400px;
@@ -166,6 +172,8 @@ body {
   border-color: #00bc77;
   background-color: #00bc77;
   color: #fff;
+  cursor: pointer; /* Ajout pour améliorer l'UX */
+  border-style: solid; /* Ajout pour assurer l'apparence cohérente */
 }
 
 .sign-in-content {
@@ -183,6 +191,7 @@ body {
 
 .input-remember {
   display: flex;
+  align-items: center; /* Ajout pour aligner correctement le texte et la case à cocher */
 }
 
 .input-remember label {
@@ -210,6 +219,12 @@ body {
   justify-content: center;
   border-top: 2px solid #ccc;
   padding: 2rem 0 1.5rem;
+  /* Modifications pour rendre le footer sticky */
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  background-color: white; /* Ajout pour assurer que le contenu derrière n'est pas visible */
+  margin-top: auto; /* Repousse le footer en bas quand il y a peu de contenu */
 }
 
 .footer-text {
@@ -260,6 +275,8 @@ body {
   color: #fff;
   font-weight: bold;
   padding: 10px;
+  cursor: pointer; /* Ajout pour améliorer l'UX */
+  border-style: solid; /* Ajout pour assurer l'apparence cohérente */
 }
 
 .header {
@@ -285,7 +302,7 @@ body {
   gap: 5px;
 }
 
-.save-button {
+.save-button, .cancel-button {
   display: block;
   width: 10%;
   padding: 8px;
@@ -295,18 +312,9 @@ body {
   border-color: #00bc77;
   background-color: #00bc77;
   color: #fff;
-}
-
-.cancel-button {
-  display: block;
-  width: 10%;
-  padding: 8px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  margin-top: 1rem;
-  border-color: #00bc77;
-  background-color: #00bc77;
-  color: #fff;
+  cursor: pointer; /* Ajout pour améliorer l'UX */
+  border-style: solid; /* Ajout pour assurer l'apparence cohérente */
+  min-width: 80px; /* Ajout pour garantir une taille minimale sur petites écrans */
 }
 
 .transaction-button {
@@ -319,6 +327,8 @@ body {
   border-color: #00bc77;
   background-color: #00bc77;
   color: #fff;
+  cursor: pointer; /* Ajout pour améliorer l'UX */
+  border-style: solid; /* Ajout pour assurer l'apparence cohérente */
 }
 
 @media (min-width: 720px) {
@@ -332,5 +342,12 @@ body {
 
   .transaction-button {
     width: 200px;
+  }
+}
+
+/* Ajustement pour les petits écrans et le footer sticky */
+@media (max-height: 600px) {
+  .footer {
+    position: relative; /* Revenir à un positionnement normal sur petits écrans */
   }
 }
