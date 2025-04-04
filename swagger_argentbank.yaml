@@ -159,21 +159,7 @@ paths:
         '200':
           description: Transactions retrieved successfully
           schema:
-            type: array
-            items:
-              type: object
-              properties:
-                transactionId:
-                  type: string
-                amount:
-                  type: number
-                date:
-                  type: string
-                  format: date-time
-                category:
-                  type: string
-                description:
-                  type: string
+            $ref: "#/definitions/SimpleTransaction"
         '400':
           description: Invalid request parameters
           schema:
@@ -205,23 +191,9 @@ paths:
         '200':
           description: Transaction details retrieved successfully
           schema:
-            type: object
-            properties:
-              transactionId:
-                type: string
-              accountId:
-                type: string
-              accountName:
-                type: string
-              amount:
-                type: number
-              date:
-                type: string
-                format: date-time
-              category:
-                type: string
-              description:
-                type: string
+            type: array
+            items:
+              $ref: '#/definitions/DetailedTransaction'
         '400':
           description: Invalid Fields
           schema:
@@ -253,17 +225,7 @@ paths:
           description: Updated transaction details
           required: true
           schema:
-            type: object
-            properties:
-              amount:
-                type: number
-              date:
-                type: string
-                format: date-time
-              category:
-                type: string
-              description:
-                type: string
+            $ref: "#/definitions/EditTransaction"
       responses:
         '200':
           description: Transaction updated successfully
@@ -277,7 +239,6 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/ErrorResponse'
-
 securityDefinitions:
   Bearer:
     type: apiKey
@@ -321,41 +282,43 @@ definitions:
         type: string
       lastName:
         type: string
-  TransactionsGroupedResponse:
+  SimpleTransaction:
     type: object
     properties:
-      status:
-        type: integer
-      message:
+      transactionId:
         type: string
-      transactions:
-        type: array
-        items:
-          type: object
-          properties:
-            accountId:
-              type: string
-            accountName:
-              type: string
-            transactions:
-              type: array
-              items:
-                type: object
-                properties:
-                  transactionId:
-                    type: string
-                  amount:
-                    type: number
-                  date:
-                    type: string
-                    format: date-time
-                  category:
-                    type: string
-                  description:
-                    type: string
+      amount:
+        type: number
+      date:
+        type: string
+      description:
+        type: string
+  DetailedTransaction:
+    type: object
+    properties:
+      transactionId:
+        type: string
+      accountId:
+        type: string
+      accountName:
+        type: string
+      amount:
+        type: number
+      date:
+        type: string
+      category:
+        type: string
+      description:
+        type: string
+  EditTransaction:
+    type: object
+    properties:
+      category:
+        type: string
+      description:
+        type: string
   ErrorResponse:
     type: object
     properties:
       error:
         type: string
-        example: "Invalid request"

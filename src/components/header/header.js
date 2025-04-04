@@ -1,9 +1,6 @@
-import React from "react";
+import React/*, { useEffect } */ from "react";
 import { NavLink } from "react-router-dom";
-
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
-
+import { useSelector, useDispatch } from "react-redux";
 import { userLogout } from "../../redux/userSlice";
 import logo from "../../asset/argentBankLogo.png";
 import "../../style/main.css";
@@ -11,18 +8,21 @@ import "../../style/main.css";
 function Header() {
 	const dispatch = useDispatch();
 
-	// retrieve store data to know about user connexion
+	// Récupérer les données utilisateur depuis Redux
 	const { firstName, lastName } = useSelector((state) => state.user);
 	console.log("User state:", useSelector((state) => state.user));
-	const connected = sessionStorage.getItem("connected");
+
+	// Vérifier la connexion dans sessionStorage OU localStorage
+	const isConnected = sessionStorage.getItem("connected") === "true" ||
+		localStorage.getItem("connected") === "true";
 
 	function Signout() {
 		dispatch(userLogout());
 	}
 
-	// Header actions depend on user connection
+	// Header actions dépendent de la connexion utilisateur
 	function headerActions() {
-		return connected ? (
+		return isConnected ? (
 			<div>
 				<NavLink to="/profile" className="main-nav-item">
 					<i className="fa fa-user-circle" />

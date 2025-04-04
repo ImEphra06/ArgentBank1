@@ -1,29 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../../style/main.css";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
 import { userLogin, userProfile } from "../../redux/userAction";
+import { checkPersistedAuth } from "../../redux/userSlice"; 
 
 function SignIn() {
-    const { success } = useSelector((state) => state.user);
+    const { success, isLogged } = useSelector((state) => state.user);
     const dispatch = useDispatch();
     const { register, handleSubmit, reset } = useForm();
     const navigate = useNavigate();
+    const [loginError, setLoginError] = useState("");
 
-    const [loginError, setLoginError] = useState(""); // État local pour les erreurs de connexion
-
-    React.useEffect(() => {
-        // Vérifier d'abord localStorage (persistant) puis sessionStorage (temporaire)
+    useEffect(() => {
+        // Vérifier les tokens au chargement de la page
+        dispatch(checkPersistedAuth());
+        
         const localToken = localStorage.getItem("userToken");
         const sessionToken = sessionStorage.getItem("userToken");
         const token = localToken || sessionToken;
 
         if (token) {
-            // Ne pas transférer le token de localStorage vers sessionStorage
-            // Utiliser le token tel qu'il est stocké
-
-            // Pour indiquer que l'utilisateur est connecté
             const isRemembered = !!localToken;
 
             if (isRemembered) {
@@ -31,45 +29,38 @@ function SignIn() {
             } else {
                 sessionStorage.setItem("connected", "true");
             }
-
             dispatch(userProfile());
             navigate("/profile");
-        } else if (success) {
+        } else if (success || isLogged) {
             dispatch(userProfile());
             navigate("/profile");
         }
-    }, [success, dispatch, navigate]);
+    }, [success, isLogged, dispatch, navigate]);
 
     // Form submission handler
     const submitForm = (data) => {
-        dispatch(userLogin(data)).then((response) => {
-            if (response.payload && response.payload.token) {
-                const token = response.payload.token;
+        dispatch(userLogin({ email: data.email, password: data.password })).then((response) => {
+            if (response.payload && response.payload.status === 200) {
+                const token = response.payload.body.token;
 
                 if (data.checkbox) {
-                    // Si "Remember Me" est coché, utiliser localStorage (persistant)
                     localStorage.setItem("userToken", token);
                     localStorage.setItem("connected", "true");
-                    // S'assurer qu'il n'y a pas de duplication dans sessionStorage
+
                     sessionStorage.removeItem("userToken");
                     sessionStorage.removeItem("connected");
                 } else {
-                    // Si "Remember Me" n'est pas coché, utiliser uniquement sessionStorage (temporaire)
                     sessionStorage.setItem("userToken", token);
                     sessionStorage.setItem("connected", "true");
-                    // S'assurer qu'il n'y a pas de données résiduelles dans localStorage
+                    
                     localStorage.removeItem("userToken");
                     localStorage.removeItem("connected");
                 }
-
-                // Si la connexion est réussie, réinitialiser le message d'erreur
                 setLoginError("");
             } else {
-                // En cas de problème (identifiants incorrects par exemple)
                 setLoginError("Identifiants incorrects ou mot de passe erroné.");
             }
         }).catch(() => {
-            // En cas d'erreur de requête (problème de réseau par exemple)
             setLoginError("Une erreur s'est produite. Veuillez réessayer.");
         });
         reset();
@@ -80,7 +71,7 @@ function SignIn() {
             <section className="sign-in-content">
                 <i className="fa fa-user-circle sign-in-icon"></i>
                 <h1>Sign In</h1>
-                {loginError && <div className="error-message">{loginError}</div>} {/* Affichage du message d'erreur */}
+                {loginError && <div className="error-message">{loginError}</div>} {}
                 <form onSubmit={handleSubmit(submitForm)}>
                     <div className="input-wrapper">
                         <label htmlFor="email">Username</label>

@@ -10,9 +10,18 @@ const fetchAPI = async (endpoint, method = "GET", body = null, auth = false) => 
 		};
 
 		if (auth) {
-			const token = sessionStorage.getItem("userToken");
+			// Vérifier d'abord le token de sessionStorage
+			let token = sessionStorage.getItem("userToken");
+			
+			// Si pas de token dans sessionStorage, vérifier localStorage (pour Remember Me)
+			if (!token) {
+				token = localStorage.getItem("userToken");
+			}
+			
 			if (token) {
 				headers["Authorization"] = `Bearer ${token}`;
+			} else {
+				throw new Error("Token d'authentification non trouvé");
 			}
 		}
 
@@ -49,13 +58,20 @@ export const userLogin = createAsyncThunk(
 // Action pour récupérer le profil utilisateur
 export const userProfile = createAsyncThunk(
 	"user/userProfile",
-	async (_, { rejectWithValue }) => {
+	async (arg, { rejectWithValue }) => {
 		try {
+			// Si un token spécifique est fourni (comme lors de la vérification au démarrage),
+			// on peut le stocker temporairement dans sessionStorage
+			if (arg && arg.token) {
+				const currentToken = sessionStorage.getItem("userToken");
+				if (!currentToken) {
+					sessionStorage.setItem("userToken", arg.token);
+				}
+			}
+			
 			const data = await fetchAPI("profile", "POST", null, true);
-			console.log("Profile API Response:", data); // Ajout du log ici
 			return data;
 		} catch (error) {
-			console.error("Error fetching profile:", error.message);
 			return rejectWithValue(error.message);
 		}
 	}
