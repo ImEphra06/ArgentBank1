@@ -159,7 +159,7 @@ paths:
         '200':
           description: Transactions retrieved successfully
           schema:
-            $ref: "#/definitions/SimpleTransaction"
+            $ref: "#/definitions/DetailedTransaction"
         '400':
           description: Invalid request parameters
           schema:
@@ -193,7 +193,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/DetailedTransaction'
+              $ref: '#/definitions/SimpleTransaction'
         '400':
           description: Invalid Fields
           schema:
@@ -287,12 +287,8 @@ definitions:
     properties:
       transactionId:
         type: string
-      amount:
+      balance:
         type: number
-      date:
-        type: string
-      description:
-        type: string
   DetailedTransaction:
     type: object
     properties:
@@ -304,11 +300,17 @@ definitions:
         type: string
       amount:
         type: number
+      balance:
+        type: number
       date:
         type: string
       category:
         type: string
       description:
+        type: string
+      type:
+        type: string
+      note:
         type: string
   EditTransaction:
     type: object
