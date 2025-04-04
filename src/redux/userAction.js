@@ -1,4 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { userLogout } from "./userSlice";
 
 const SERVER_URL = "http://localhost:3001/api/v1/user/";
 
@@ -58,7 +59,7 @@ export const userLogin = createAsyncThunk(
 // Action pour récupérer le profil utilisateur
 export const userProfile = createAsyncThunk(
 	"user/userProfile",
-	async (arg, { rejectWithValue }) => {
+	async (arg, { rejectWithValue, dispatch }) => {
 		try {
 			// Si un token spécifique est fourni (comme lors de la vérification au démarrage),
 			// on peut le stocker temporairement dans sessionStorage
@@ -68,10 +69,14 @@ export const userProfile = createAsyncThunk(
 					sessionStorage.setItem("userToken", arg.token);
 				}
 			}
-			
+
 			const data = await fetchAPI("profile", "POST", null, true);
 			return data;
 		} catch (error) {
+			if (error.message.includes("unauthorized") || error.message.includes("token")) {
+				// Déconnexion automatique en cas de problème d'authentification
+				dispatch(userLogout());
+			}
 			return rejectWithValue(error.message);
 		}
 	}

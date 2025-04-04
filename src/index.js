@@ -10,6 +10,7 @@ import { userProfile } from "./redux/userAction";
 import './index.css';
 import Header from "./components/header/header";
 import Footer from "./components/footer/footer";
+import ProtectedRoute from "./components/protected/protected";
 import Homepage from "./page/homepage/homepage";
 import SignIn from "./page/signin/signin";
 import User from "./page/user/user";
@@ -38,7 +39,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Homepage />} />
         <Route path="/login" element={<SignIn />} />
-        <Route path="/profile" element={<User />} />
+        <Route path="/profile" element={<ProtectedRoute> <User /> </ProtectedRoute>} />
         <Route path="/*" element={<ErrorPage />} />
       </Routes>
       <Footer />
