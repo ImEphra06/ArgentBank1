@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
 import { userLogin, userProfile } from "../../redux/userAction";
-import { checkPersistedAuth } from "../../redux/userSlice"; 
+import { checkPersistedAuth } from "../../redux/userSlice";
 
 function SignIn() {
     const { success, isLogged } = useSelector((state) => state.user);
